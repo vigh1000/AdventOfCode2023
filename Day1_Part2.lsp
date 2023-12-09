@@ -1,9 +1,14 @@
-(defparameter *input-day-one-test* (list "two1nine" "eightwothree" "abcone2threexyz" "xtwone3four" "4nineeightseven2" "zoneight234" "7pqrstsixteen"))
+;(defparameter *input-day-one-test* (list "two1nine" "eightwothree" "abcone2threexyz" "xtwone3four" "4nineeightseven2" "zoneight234" "7pqrstsixteen"))
+(defparameter *input-day-one-test* (list "9four7twofourtwotjlpcqeight3" "threethreebxqqsnfzvqfivefmnc71" "dpdpxgxndx7eightthree7eightfivexdllmmm"))
 
 (defun day1 ()
     "https://adventofcode.com/2023/day/1"
     (let (input-transformed-to-numbers)
-        (setq input-transformed-to-numbers (transform-input-to-numbers (get-input-from-file "./Day1_Input.txt")))
+        (setq input-transformed-to-numbers (transform-input-to-numbers (get-input-from-file "./Day1_Input.txt")))        
+        ; (do ((temp-list '() input-transformed-to-numbers)
+        ;      (transformed-list '() (transform-input-to-numbers temp-list))) 
+        ;     ((equalp 1 (length (compare-lists temp-list transformed-list))) input-transformed-to-numbers))
+        (dotimes (i 20) (setq input-transformed-to-numbers (transform-input-to-numbers input-transformed-to-numbers)))
         (sum-calibration-value input-transformed-to-numbers)
     )
 )
@@ -11,6 +16,12 @@
 (defun day1-test ()
     (let (input-transformed-to-numbers)
         (setq input-transformed-to-numbers (transform-input-to-numbers *input-day-one-test*))
+        ;bekomme es nicht hin mit do
+        ; (print (do ((temp-list '() input-transformed-to-numbers)
+        ;      (transformed-list '() (transform-input-to-numbers temp-list))) 
+        ;     ((equalp 1 (length (compare-lists temp-list transformed-list))) transformed-list)))
+        (pprint input-transformed-to-numbers)
+        (dotimes (i 20) (setq input-transformed-to-numbers (transform-input-to-numbers input-transformed-to-numbers)))
         (pprint "transformed list:")
         (pprint input-transformed-to-numbers)
         (sum-calibration-value input-transformed-to-numbers)
@@ -43,12 +54,17 @@
     )
 )
 
-;; funktioniert so nicht, wegen eightwothree => hier wird die zwei ersetzt und dann wird die 8 nicht mehr erkannt
+(defun compare-lists (list1 list2)
+  (remove-duplicates (loop for elem1 in list1
+        for elem2 in list2
+        collect (string= elem1 elem2)))  
+)
+
 (defun transform-input-to-numbers (input-list)
     (let ((return-sequence '()))
       (dolist (element input-list)
         (when (find-one-as-word element)  ;find-one-as-word müsste erweitert werden 
-           (replace element "1" :start1 (+ (find-one-as-word element) 1) :end1 (+ (find-one-as-word element) 3))) ; nicht schön, weil der Rest von 'one' zurück bleibt
+           (replace element "1" :start1 (+ (find-one-as-word element) 1) :end1 (+ (find-one-as-word element) 3)))
         (when (search "two" element)
            (replace element "2" :start1 (+ (search "two" element) 1) :end1 (+ (search "two" element) 3)))
         (when (search "three" element)
